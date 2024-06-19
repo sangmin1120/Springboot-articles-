@@ -3,6 +3,7 @@ HELP.md
 .idea
 /build
 build/
+*.txt
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
