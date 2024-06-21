@@ -35,7 +35,7 @@ public class MemberController {
         // 2. repository에 저장
         Member saved = memberRepository.save(member);
         log.info(saved.toString());
-        return "";
+        return "redirect:/members/"+saved.getId();
     }
 
     @GetMapping("/members/{id}")
