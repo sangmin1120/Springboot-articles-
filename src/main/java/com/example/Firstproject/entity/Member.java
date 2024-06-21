@@ -5,10 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 @Entity
 public class Member {
