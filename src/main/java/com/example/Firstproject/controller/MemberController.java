@@ -58,4 +58,34 @@ public class MemberController {
         // 3. 뷰 페이지 반환
         return "members/index";
     }
+
+    @GetMapping("/members/{id}/edit")
+    public String edit(@PathVariable Long id , Model model){
+        // 엔티티 찾기
+        Member memberEntity = memberRepository.findById(id).orElse(null);
+
+        log.info(memberEntity.toString());
+        // 모델 등록
+        model.addAttribute("member",memberEntity);
+
+        // 뷰 반환
+        return "members/edit";
+    }
+
+    @PostMapping("/members/update")
+    public String update(MemberForm form){
+        log.info(form.toString());
+
+        // 엔티티로 변환
+        Member memberEntity = form.toEntity();
+
+        // DB에서 찾기
+        Member target = memberRepository.findById(memberEntity.getId()).orElse(null);
+        // 갱신
+        if (target != null){
+            memberRepository.save(memberEntity);
+        }
+        // 리다이렉트
+        return "redirect:/members/"+memberEntity.getId();
+    }
 }
