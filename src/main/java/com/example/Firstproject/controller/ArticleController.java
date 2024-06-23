@@ -79,10 +79,18 @@ public class ArticleController {
     public String update(ArticleForm form){ // form을 DTO로 가져와
         log.info(form.toString());
 
-        // 2. 엔티티 형태로 변경
+        // 1. 엔티티 형태로 변경
+        Article articleEntity = form.toEntity();
 
-        // 3. sql 수정
+        // 2. 엔티티 저장
+        // 2.1 DB에서 기존 데이터 가져오기
+        Article target = articleRepository.findById(articleEntity.getId()).orElse(null);
+        // 2.2 기존 데이터 값을 갱신
+        if (target != null){
+            articleRepository.save(articleEntity); // 엔티티를 DB에 갱신
+        }
 
-        return "";
+        // 3. 수정 결과 페이지로 리다이렉트
+        return "redirect:/articles/"+articleEntity.getId();
     }
 }
