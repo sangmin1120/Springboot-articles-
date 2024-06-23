@@ -62,4 +62,27 @@ public class ArticleController {
         // 3. 뷰 페이지 설정하기
         return "articles/index";
     }
+
+    @GetMapping("/articles/{id}/edit")
+    public String edit(@PathVariable Long id , Model model){
+        // 수정할 데이터 가져오기
+        Article articleEntity = articleRepository.findById(id).orElse(null);
+
+        // 모델에 등록하기
+        model.addAttribute("article",articleEntity);
+
+        // 뷰 페이지 설정하기
+        return "articles/edit";
+    }
+
+    @PostMapping("/articles/update")
+    public String update(ArticleForm form){ // form을 DTO로 가져와
+        log.info(form.toString());
+
+        // 2. 엔티티 형태로 변경
+
+        // 3. sql 수정
+
+        return "";
+    }
 }
