@@ -1,9 +1,6 @@
 package com.example.Firstproject.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +12,10 @@ import lombok.ToString;
 @Getter
 @Entity
 public class Article {
+    // 원래는 data.sql에서 id 값을 입력해 주었는데 새로운 article을 생성하면 기본키 error
+    // 그래서 기본키를 DB에서 자동 생성하고 data.sql insert할 때 id 값을 없앴다.
     @Id // 엔티티의 대푯값 지정
-    @GeneratedValue // 자동 생성 기능 추가 (숫자가 자동으로 매겨짐)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 생성 기능 추가 (숫자가 자동으로 매겨짐)
     private Long id;
     @Column // title 필드 선언 , DB 테이블의 title열과 연결됨
     private String title;
