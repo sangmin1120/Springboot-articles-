@@ -5,3 +5,7 @@ insert into member(email,password) values('111@111','1234');
 insert into member(email,password) values('222@222','qwer');
 insert into member(email,password) values('333@333','asdf');
 
+insert into coffee(name,price) values('아메리카노','4500');
+insert into coffee(name,price) values('라떼','5000');
+insert into coffee(name,price) values('카페 모카','5500');
+
