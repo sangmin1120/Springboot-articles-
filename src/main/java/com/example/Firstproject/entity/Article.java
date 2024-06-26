@@ -21,4 +21,13 @@ public class Article {
     private String title;
     @Column // content 필드 선언 , DB 테이블의 content열과 연결됨
     private String content;
+
+    public void patch(Article article) {
+        if (article.getTitle() != null) {
+            this.title = article.getTitle();
+        }
+        if (article.getContent() != null) {
+            this.content = article.getContent();
+        }
+    }
 }
