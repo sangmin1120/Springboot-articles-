@@ -1,0 +1,26 @@
+package com.example.Firstproject.DTO;
+
+import com.example.Firstproject.entity.Comment;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@ToString
+public class CommentDto {
+
+    private Long id;
+    private Long articldId;
+    private String nickname;
+    private String body;
+
+    public static CommentDto createCommentDto(Comment c) {
+        return new CommentDto(c.getId(),
+                              c.getArticle().getId(),
+                              c.getNickname(),
+                              c.getBody());
+    }
+}
