@@ -13,7 +13,7 @@ import lombok.ToString;
 public class CommentDto {
 
     private Long id;
-    private Long articldId;
+    private Long articleId;
     private String nickname;
     private String body;
 
