@@ -18,7 +18,7 @@ insert into comment(article_id,nickname,body) values(4,'kim','아이 엠 샘');
 insert into comment(article_id,nickname,body) values(4,'Choi','쇼생크 탈출');
 insert into comment(article_id,nickname,body) values(5,'Park','치킨');
 insert into comment(article_id,nickname,body) values(5,'kim','샤브샤브');
-insert into comment(article_id,nickname,body) values(5,'Choi','chqkq');
+insert into comment(article_id,nickname,body) values(5,'Choi','초밥');
 insert into comment(article_id,nickname,body) values(6,'Park','조깅');
 insert into comment(article_id,nickname,body) values(6,'Kim','유튜브 시청');
 insert into comment(article_id,nickname,body) values(6,'Choi','독서');
