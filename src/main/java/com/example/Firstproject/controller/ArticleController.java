@@ -1,8 +1,10 @@
 package com.example.Firstproject.controller;
 
+import com.example.Firstproject.DTO.CommentDto;
 import com.example.Firstproject.entity.Article;
 import com.example.Firstproject.repository.ArticleRepository;
 import com.example.Firstproject.DTO.ArticleForm;
+import com.example.Firstproject.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,11 +16,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+import static org.yaml.snakeyaml.events.Event.ID.Comment;
+
 @Slf4j // 로깅 기능을 위한 어노테이션 추가
 @Controller
 public class ArticleController {
     @Autowired // 스프링 부트가 미리 생성해 놓은 리파지토리 객체 주입(DI : dependenct injection 의존성 주입)
     private ArticleRepository articleRepository;
+    @Autowired
+    private CommentService commentService;
 
     @GetMapping("/articles/new")
     public String newArticleForm(){
@@ -44,9 +50,11 @@ public class ArticleController {
         log.info("id = " +id); // id를 잘 받았는 지 확인
         // 1. id를 조회해 데이터 가져오기
         Article articleEntity = articleRepository.findById(id).orElse(null);
+        List<CommentDto> commentDtos = commentService.comments(id);
 
         // 2. 모델에 데이터 등록하기
         model.addAttribute("article" , articleEntity);
+        model.addAttribute("commentDtos",commentDtos);
 
         // 3. 뷰 페이지 반환하기
         return "articles/show";
