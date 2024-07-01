@@ -74,4 +74,37 @@
             document.querySelector("#edit-comment-article-id").value = articleId;
         });
     }
+    // REST API 호출
+    {
+        // 버튼 불러오기
+        const commentUpdateBtn = document.querySelector("#comment-update-btn")
+
+        commentUpdateBtn.addEventListener("click",function(){
+            // 수정된 폼 생성
+            const comment = {
+              id : document.querySelector("#edit-comment-id").value,
+              articleId : document.querySelector("#edit-comment-article-id").value,
+              nickname : document.querySelector("#edit-comment-nickname").value,
+              body : document.querySelector("#edit-comment-body").value
+            };
+            console.log(comment);
+
+            // 수정 REST API 호출
+            const url = "/api/comments/" + comment.id;
+            fetch(url , {
+            method : "PATCH",
+            headers :{ // 전송 데이터 타입
+                "Content-Type" : "application/json"
+            },
+            body : JSON.stringify(comment)
+            }).then(response => {
+                // HTTP 응답 코드에 따른 메시지 출력
+                const msg = (response.ok) ? "댓글이 수정됐습니다." : "댓글 수정 실패..!";
+                alert(msg);
+
+                // 페이지 새로 고침
+                window.location.reload();
+            });
+        });
+    }
 </script>
