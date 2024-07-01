@@ -5,6 +5,23 @@
     <title>Title</title>
 </head>
 <body>
-    <h1>헬로 월드!</h1>
+    <h1>Hello, <span id="target">World</span></h1>
+    <input type="text" id="text-input">
+    <button id="second-btn">전송</button>
+    <script>
+        {
+            const inputElement = document.querySelector("#text-input");
+            const btnElement = document.querySelector("#second-btn");
+
+
+            btnElement.addEventListener("click",function(){
+                const str = inputElement.value;
+                console.log(str);
+                inputElement.value = "";
+
+                document.querySelector("#target").innerText = str;
+            });
+        }
+    </script>
 </body>
 </html>
