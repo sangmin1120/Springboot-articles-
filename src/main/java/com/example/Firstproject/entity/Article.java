@@ -1,5 +1,7 @@
 package com.example.Firstproject.entity;
 
+import com.example.Firstproject.DTO.ArticleForm;
+import com.example.Firstproject.DTO.MemberForm;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +19,9 @@ public class Article {
     @Id // 엔티티의 대푯값 지정
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 생성 기능 추가 (숫자가 자동으로 매겨짐)
     private Long id;
+    @ManyToOne
+    @JoinColumn(name="member_id")
+    private Member member;
     @Column // title 필드 선언 , DB 테이블의 title열과 연결됨
     private String title;
     @Column // content 필드 선언 , DB 테이블의 content열과 연결됨
@@ -29,5 +34,11 @@ public class Article {
         if (article.getContent() != null) {
             this.content = article.getContent();
         }
+    }
+    public static Article toEntity(ArticleForm dto, Member member){
+        return new Article(dto.getId(),
+                member,
+                dto.getTitle(),
+                dto.getContent());
     }
 }
