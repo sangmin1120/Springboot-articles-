@@ -1,5 +1,6 @@
 package com.example.Firstproject.entity;
 
+import com.example.Firstproject.DTO.MemberForm;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,4 +22,12 @@ public class Member {
     private String email;
     @Column
     private String password;
+
+    public void patch(MemberForm dto) {
+        if (this.getId() != dto.getId()){
+            throw new IllegalArgumentException("댓글 수정 실패..!");
+        }
+        if (this.getEmail() != dto.getEmail()){ this.email = dto.getEmail();}
+        if (this.getPassword() != dto.getPassword()) {  this.password = dto.getPassword();}
+    }
 }
