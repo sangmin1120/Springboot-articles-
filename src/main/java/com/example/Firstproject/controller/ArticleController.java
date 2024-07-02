@@ -2,8 +2,10 @@ package com.example.Firstproject.controller;
 
 import com.example.Firstproject.DTO.CommentDto;
 import com.example.Firstproject.entity.Article;
+import com.example.Firstproject.entity.Member;
 import com.example.Firstproject.repository.ArticleRepository;
 import com.example.Firstproject.DTO.ArticleForm;
+import com.example.Firstproject.repository.MemberRepository;
 import com.example.Firstproject.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ public class ArticleController {
     private ArticleRepository articleRepository;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private MemberRepository memberRepository;
 
     @GetMapping("/articles/new")
     public String newArticleForm(){
@@ -36,7 +40,10 @@ public class ArticleController {
     public String createArticle(ArticleForm form){
         // System.out.println(form.toString());
         // 1. DTO를 엔티티로 변환
-        Article article = form.toEntity();
+        Long member_id = form.getMemberId();
+        Member member = memberRepository.findById(member_id).orElse(null);
+
+        Article article = Article.toEntity(form , member);
         // log.info(article.toString());
 
         // 2. 리파지터리로 엔티티를 DB에 저장
@@ -87,9 +94,11 @@ public class ArticleController {
     @PostMapping("/articles/update")
     public String update(ArticleForm form){ // form을 DTO로 가져와
         log.info(form.toString());
+        Long member_id = form.getMemberId();
+        Member member = memberRepository.findById(member_id).orElse(null);
 
         // 1. 엔티티 형태로 변경
-        Article articleEntity = form.toEntity();
+        Article articleEntity = Article.toEntity(form,member);
 
         // 2. 엔티티 저장
         // 2.1 DB에서 기존 데이터 가져오기

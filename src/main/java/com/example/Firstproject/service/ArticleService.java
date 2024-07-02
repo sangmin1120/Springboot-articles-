@@ -2,7 +2,9 @@ package com.example.Firstproject.service;
 
 import com.example.Firstproject.DTO.ArticleForm;
 import com.example.Firstproject.entity.Article;
+import com.example.Firstproject.entity.Member;
 import com.example.Firstproject.repository.ArticleRepository;
+import com.example.Firstproject.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 public class ArticleService {
     @Autowired
     private ArticleRepository articleRepository; // 게시글 리파지터리 객체 주입
+    @Autowired
+    private MemberRepository memberRepository;
 
     // REST의 GET
     public List<Article> index(){
@@ -32,7 +36,11 @@ public class ArticleService {
 
     // REST의 PATCH
     public Article create(ArticleForm dto) {
-        Article article = dto.toEntity();
+        Long member_id = dto.getMemberId();
+        Member member = memberRepository.findById(member_id).orElse(null);
+
+        Article article = Article.toEntity(dto,member);
+        log.info(article.toString());
         if (article.getId() != null){
             return null;
         }
@@ -41,8 +49,11 @@ public class ArticleService {
 
     // REST의 PATCH
     public Article updated(Long id, ArticleForm dto) {
+        Long member_id = dto.getMemberId();
+        Member member = memberRepository.findById(member_id).orElse(null);
+
         // DTO -> 엔티티
-        Article article = dto.toEntity();
+        Article article = Article.toEntity(dto,member);
         log.info("id: {} , article: {}",id,article.toString());
 
         // id로 타깃 조회
@@ -76,22 +87,22 @@ public class ArticleService {
 
 
     // transaction -test
-    @Transactional
-    public List<Article> createdList(List<ArticleForm> dtos) {
-        // dto 묶음을 엔티티 묶음으로 변환
-        List<Article> articleList = dtos.stream()
-                .map(dto -> dto.toEntity())
-                .collect(Collectors.toList());
-
-        // 엔티티 묶음을 DB에 저장
-        articleList.stream()
-                .map(article -> articleRepository.save(article));
-
-        // 강제 예외 발생
-        articleRepository.findById(-1L)
-                .orElseThrow(() -> new IllegalArgumentException("결제 실패!")); // 찾는 데이터가 없는 결제 실패
-
-        // 결과 값 반환
-        return articleList;
-    }
+//    @Transactional
+//    public List<Article> createdList(List<ArticleForm> dtos) {
+//        // dto 묶음을 엔티티 묶음으로 변환
+//        List<Article> articleList = dtos.stream()
+//                .map(dto -> dto.toEntity())
+//                .collect(Collectors.toList());
+//
+//        // 엔티티 묶음을 DB에 저장
+//        articleList.stream()
+//                .map(article -> articleRepository.save(article));
+//
+//        // 강제 예외 발생
+//        articleRepository.findById(-1L)
+//                .orElseThrow(() -> new IllegalArgumentException("결제 실패!")); // 찾는 데이터가 없는 결제 실패
+//
+//        // 결과 값 반환
+//        return articleList;
+//    }
 }
