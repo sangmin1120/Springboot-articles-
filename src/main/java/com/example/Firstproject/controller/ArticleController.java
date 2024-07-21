@@ -40,10 +40,7 @@ public class ArticleController {
     public String createArticle(ArticleForm form){
         // System.out.println(form.toString());
         // 1. DTO를 엔티티로 변환
-        Long member_id = form.getMemberId();
-        Member member = memberRepository.findById(member_id).orElse(null);
-
-        Article article = Article.toEntity(form , member);
+        Article article = form.toEntity();
         // log.info(article.toString());
 
         // 2. 리파지터리로 엔티티를 DB에 저장
@@ -93,12 +90,9 @@ public class ArticleController {
 
     @PostMapping("/articles/update")
     public String update(ArticleForm form){ // form을 DTO로 가져와
-        log.info(form.toString());
-        Long member_id = form.getMemberId();
-        Member member = memberRepository.findById(member_id).orElse(null);
-
+        // log.info(form.toString());
         // 1. 엔티티 형태로 변경
-        Article articleEntity = Article.toEntity(form,member);
+        Article articleEntity = form.toEntity();
 
         // 2. 엔티티 저장
         // 2.1 DB에서 기존 데이터 가져오기

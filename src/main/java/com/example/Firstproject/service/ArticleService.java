@@ -36,10 +36,7 @@ public class ArticleService {
 
     // REST의 PATCH
     public Article create(ArticleForm dto) {
-        Long member_id = dto.getMemberId();
-        Member member = memberRepository.findById(member_id).orElse(null);
-
-        Article article = Article.toEntity(dto,member);
+        Article article = dto.toEntity();
         log.info(article.toString());
         if (article.getId() != null){
             return null;
@@ -49,11 +46,8 @@ public class ArticleService {
 
     // REST의 PATCH
     public Article updated(Long id, ArticleForm dto) {
-        Long member_id = dto.getMemberId();
-        Member member = memberRepository.findById(member_id).orElse(null);
-
         // DTO -> 엔티티
-        Article article = Article.toEntity(dto,member);
+        Article article = dto.toEntity();
         log.info("id: {} , article: {}",id,article.toString());
 
         // id로 타깃 조회

@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 public class CoffeeDto {
     private Long id;
-        private String name;
+    private String name;
     private String price;
 
     public Coffee toEntity(){
