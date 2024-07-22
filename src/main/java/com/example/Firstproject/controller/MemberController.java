@@ -4,6 +4,7 @@ import com.example.Firstproject.entity.Member;
 import com.example.Firstproject.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,8 @@ import java.util.List;
 public class MemberController {
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder; // DI
 
     @GetMapping("/members/new")
     public String newMemberForm(){
@@ -29,8 +32,9 @@ public class MemberController {
     @PostMapping("/members/create")
     public String createMember(MemberForm form){
         // System.out.println(form.toString());
+        String encodedPwd = passwordEncoder.encode(form.getPassword());
         // 1. DTO->엔티티로 변환
-        Member member = form.toEntity();
+        Member member = new Member(null,form.getEmail(),encodedPwd);
         // System.out.println(member.toString());
 
         // 2. repository에 저장
