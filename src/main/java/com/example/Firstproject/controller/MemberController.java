@@ -118,7 +118,7 @@ public class MemberController {
     }
 
     @GetMapping("/members/check")
-    public String check_id(MemberForm dto , RedirectAttributes rttr){
+    public String check_id(MemberForm dto , Model model , RedirectAttributes rttr){
         // 1. form을 받아와 엔티티로 변경 후
         Member entity = dto.toEntity();
         // log.info(entity.toString());
@@ -139,6 +139,7 @@ public class MemberController {
             return "redirect:/login";
         }
 
+        model.addAttribute("member",target);
         // 4. 로그인 성공하면 "redirect:/members";
         return "members/mypage";
     }
