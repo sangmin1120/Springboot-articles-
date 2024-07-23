@@ -32,6 +32,7 @@ public class MemberController {
     @PostMapping("/members/create")
     public String createMember(MemberForm form){
         // System.out.println(form.toString());
+        /* 비빌번호 인코딩 */
         String encodedPwd = passwordEncoder.encode(form.getPassword());
         // 1. DTO->엔티티로 변환
         Member member = new Member(null,form.getEmail(),encodedPwd);
@@ -108,5 +109,37 @@ public class MemberController {
 
         // 3. 뷰 템플릿 반환
         return "redirect:/members";
+    }
+
+    // init 화면에서 로그인 encoding된 로그인
+    @GetMapping("/login")
+    public String show_login(){
+        return "members/init";
+    }
+
+    @GetMapping("/members/check")
+    public String check_id(MemberForm dto , RedirectAttributes rttr){
+        // 1. form을 받아와 엔티티로 변경 후
+        Member entity = dto.toEntity();
+        // log.info(entity.toString());
+
+        // 2. DB에서 아이디 값을 찾아
+        Member target = memberRepository.findByEamil(entity.getEmail());
+        // log.info(target.toString());
+
+        // 3. 비교
+        if (target == null){
+            // 실패 모달 띄우고 리다이렉트
+            rttr.addFlashAttribute("msg","target 찾기 실패..!");
+            return "redirect:/login";
+        }
+        if ((entity.getEmail() == target.getEmail()) && (entity.getPassword() != entity.getPassword())){
+            // 실패 화면 띄우고 리다이렉트
+            rttr.addFlashAttribute("msg","불일치..!");
+            return "redirect:/login";
+        }
+
+        // 4. 로그인 성공하면 "redirect:/members";
+        return "members/mypage";
     }
 }
