@@ -117,10 +117,12 @@ public class MemberController {
         return "members/init";
     }
 
+    // 로그인 확인하고 mypage를 반환
     @GetMapping("/members/check")
     public String check_id(MemberForm dto , Model model , RedirectAttributes rttr){
         // 1. form을 받아와 엔티티로 변경 후
         Member entity = dto.toEntity();
+
         // log.info(entity.toString());
 
         // 2. DB에서 아이디 값을 찾아
@@ -133,9 +135,14 @@ public class MemberController {
             rttr.addFlashAttribute("msg","target 찾기 실패..!");
             return "redirect:/login";
         }
-        if ((entity.getEmail() == target.getEmail()) && (entity.getPassword() != entity.getPassword())){
+        if (entity.getEmail() == target.getEmail()){
             // 실패 화면 띄우고 리다이렉트
-            rttr.addFlashAttribute("msg","불일치..!");
+            rttr.addFlashAttribute("msg","아이디 불일치..!");
+            return "redirect:/login";
+        }
+        if (!passwordEncoder.matches(entity.getPassword(), target.getPassword())){
+            // 실패 화면 띄우고 리다이렉트
+            rttr.addFlashAttribute("msg","비밀번호 불일치..!");
             return "redirect:/login";
         }
 
