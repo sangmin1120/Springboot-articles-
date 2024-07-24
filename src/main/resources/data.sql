@@ -1,4 +1,4 @@
-insert into member(email,password) values('111@111','1234');
+insert into member(email,password) values('111@111','{bcrypt}$2a$10$FRUHyArxnxuTSvKWQ7GB2eANgBwd2RiK/xNreM5XbltNdbMi.ae7m');
 insert into member(email,password) values('222@222','qwer');
 insert into member(email,password) values('333@333','asdf');
 insert into article(title,content) values('가가가가','1111');
