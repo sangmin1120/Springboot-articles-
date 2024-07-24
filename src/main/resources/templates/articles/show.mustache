@@ -16,6 +16,9 @@
             <td>{{content}}</td>
         </tr>
         {{/article}}
+        {{#member}}
+            <input type="hidden" id="new-article-member-id" value="{{id}}">
+        {{/member}}
         </tbody>
     </table>
 <a href="/articles/{{article.id}}/edit" class="btn btn-primary">Edit</a>
