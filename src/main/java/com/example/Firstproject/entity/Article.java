@@ -27,7 +27,14 @@ public class Article {
     @Column // content 필드 선언 , DB 테이블의 content열과 연결됨
     private String content;
 
-    public Article create(ArticleForm form,Member member){
+    public static Article toEntity(ArticleForm form, Member member){
+        // 예외 발생
+        if (form.getId() != null){
+            throw new IllegalArgumentException("게시글 생성 실패! 댓글의 id가 없어야 합니다. ");
+        }
+        if (form.getMemberId() != member.getId()){
+            throw new IllegalArgumentException("게시글 생성 실패! 게시글의 id가 잘못됐습니다.");
+        }
         return new Article(form.getId(),
                 member,
                 form.getTitle(),
