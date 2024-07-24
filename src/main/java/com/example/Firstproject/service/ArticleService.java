@@ -26,18 +26,22 @@ public class ArticleService {
     @Autowired
     private MemberRepository memberRepository;
 
+
     // REST의 GET
-    public List<Article> index(){
-        return (List<Article>)articleRepository.findAll();
+    public List<Article> index(Long memberId){
+        List<Article> articleList = (List<Article>)articleRepository.findByMemberId(memberId);
+        return articleList;
     }
 
     public Article show(Long id) {
         return articleRepository.findById(id).orElse(null);
     }
 
-    // REST의 PATCH
-    public Article create(ArticleForm dto) {
-        Article article = dto.toEntity();
+    // REST의 POST
+    public Article create(Long memberId , ArticleForm dto) {
+        Member member = memberRepository.findById(memberId).orElse(null);
+
+        Article article = Article.toEntity(dto,member);
         log.info(article.toString());
         if (article.getId() != null){
             return null;
@@ -46,9 +50,14 @@ public class ArticleService {
     }
 
     // REST의 PATCH
-    public Article updated(Long id, ArticleForm dto) {
+    public Article updated(Long memberId , Long id, ArticleForm dto) {
+        // patch : 아이디를 찾지 못해서 실패..!
+        Member member = memberRepository.findById(memberId).orElse(null);
+        if (member==null){
+            return null;
+        }
         // DTO -> 엔티티
-        Article article = dto.toEntity();
+        Article article = Article.toEntity(dto,member);
         log.info("id: {} , article: {}",id,article.toString());
 
         // id로 타깃 조회
@@ -67,7 +76,7 @@ public class ArticleService {
     }
 
     // REST의 DELETE
-    public Article delete(Long id) {
+    public Article delete(Long memberId , Long id) {
         // id 찾기
         Article target = articleRepository.findById(id).orElse(null);
 
@@ -80,8 +89,8 @@ public class ArticleService {
         return target;
     }
 
-    public List<ArticleForm> articles(Long memberid){
-        return articleRepository.findByMemberId(memberid)
+    public List<ArticleForm> articles(Long memberId){
+        return articleRepository.findByMemberId(memberId)
                 .stream().map(article -> ArticleForm.createArticleForm(article)).collect(Collectors.toList());
     }
     // transaction -test
