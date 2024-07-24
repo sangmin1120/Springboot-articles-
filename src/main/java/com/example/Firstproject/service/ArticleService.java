@@ -1,6 +1,7 @@
 package com.example.Firstproject.service;
 
 import com.example.Firstproject.DTO.ArticleForm;
+import com.example.Firstproject.DTO.CommentDto;
 import com.example.Firstproject.entity.Article;
 import com.example.Firstproject.entity.Member;
 import com.example.Firstproject.repository.ArticleRepository;
@@ -79,7 +80,10 @@ public class ArticleService {
         return target;
     }
 
-
+    public List<ArticleForm> articles(Long memberid){
+        return articleRepository.findByMemberId(memberid)
+                .stream().map(article -> ArticleForm.createArticleForm(article)).collect(Collectors.toList());
+    }
     // transaction -test
 //    @Transactional
 //    public List<Article> createdList(List<ArticleForm> dtos) {
