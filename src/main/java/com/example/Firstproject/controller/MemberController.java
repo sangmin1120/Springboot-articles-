@@ -1,7 +1,12 @@
 package com.example.Firstproject.controller;
 
+import com.example.Firstproject.DTO.ArticleForm;
+import com.example.Firstproject.DTO.CommentDto;
+import com.example.Firstproject.entity.Article;
 import com.example.Firstproject.entity.Member;
+import com.example.Firstproject.repository.ArticleRepository;
 import com.example.Firstproject.repository.MemberRepository;
+import com.example.Firstproject.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +19,7 @@ import com.example.Firstproject.DTO.MemberForm;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -22,6 +28,10 @@ public class MemberController {
     private MemberRepository memberRepository;
     @Autowired
     private PasswordEncoder passwordEncoder; // DI
+    @Autowired
+    private ArticleRepository articleRepository;
+    @Autowired
+    private ArticleService articleService;
 
     @GetMapping("/members/new")
     public String newMemberForm(){
@@ -151,7 +161,10 @@ public class MemberController {
             return "redirect:/login";
         }
 
+        List<ArticleForm> articles = articleService.articles(target.getId());
         model.addAttribute("member",target);
+        model.addAttribute("articleList",articles);
+
         // 4. 로그인 성공하면 "redirect:/members";
         return "members/mypage";
     }
