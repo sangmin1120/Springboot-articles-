@@ -1,6 +1,7 @@
 package com.example.Firstproject.controller;
 
 import com.example.Firstproject.DTO.CommentDto;
+import com.example.Firstproject.DTO.MemberForm;
 import com.example.Firstproject.entity.Article;
 import com.example.Firstproject.entity.Member;
 import com.example.Firstproject.repository.ArticleRepository;
@@ -37,11 +38,11 @@ public class ArticleController {
     }
 
     @PostMapping("/articles/create") // mustache에서 action과 같
-    public String createArticle(ArticleForm form){
+    public String createArticle(ArticleForm form, MemberForm m_form){
         // System.out.println(form.toString());
         // 1. DTO를 엔티티로 변환
-        Article article = form.toEntity();
-        // log.info(article.toString());
+        Article article = Article.toEntity(form,m_form.toEntity());
+//         log.info(article.toString());
 
         // 2. 리파지터리로 엔티티를 DB에 저장
         Article saved = articleRepository.save(article);
@@ -58,7 +59,7 @@ public class ArticleController {
 
         // 2. 모델에 데이터 등록하기
         model.addAttribute("article" , articleEntity);
-        model.addAttribute("commentDtos",commentDtos);
+        model.addAttribute("commentDtos" , commentDtos);
 
         // 3. 뷰 페이지 반환하기
         return "articles/show";
@@ -91,8 +92,11 @@ public class ArticleController {
     @PostMapping("/articles/update")
     public String update(ArticleForm form){ // form을 DTO로 가져와
         // log.info(form.toString());
+        Member member = memberRepository.findById(form.getMemberId()).orElse(null);
         // 1. 엔티티 형태로 변경
-        Article articleEntity = form.toEntity();
+        Article articleEntity = Article.toEntity(form,member);
+
+// 수정할 때 오류 체크 검토 ex) member_id 달라지는 지
 
         // 2. 엔티티 저장
         // 2.1 DB에서 기존 데이터 가져오기
