@@ -30,7 +30,12 @@ public class MemberController {
     }
 
     @PostMapping("/members/create")
-    public String createMember(MemberForm form){
+    public String createMember(MemberForm form,RedirectAttributes rttr){
+        String email = form.getEmail();
+        if (memberRepository.findByEamil(email) != null){
+            rttr.addFlashAttribute("msg","아이디 중복..!");
+            return "redirect:/members/new";
+        }
         // System.out.println(form.toString());
         /* 비빌번호 인코딩 */
         String encodedPwd = passwordEncoder.encode(form.getPassword());
