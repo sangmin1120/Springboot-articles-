@@ -49,9 +49,9 @@ class CommentRepositoryTest {
         List<Comment> comments = commentRepository.findByNickname(nickname);
 
         // 3. 예상 데이터
-        Comment a = new Comment(1L,new Article(4L,"당신의 인생 영화는?","댓글 고"),"Park","굿 윌 헌팅");
-        Comment b = new Comment(4L,new Article(5L,"당신의 소울 푸드는?","댓글 고고"),"Park","치킨");
-        Comment c = new Comment(7L,new Article(6L,"당신의 취미는?","댓글 고고고"),"Park","조깅");
+        Comment a = new Comment(1L,new Article(4L,null,"당신의 인생 영화는?","댓글 고"),"Park","굿 윌 헌팅");
+        Comment b = new Comment(4L,new Article(5L,null,"당신의 소울 푸드는?","댓글 고고"),"Park","치킨");
+        Comment c = new Comment(7L,new Article(6L,null,"당신의 취미는?","댓글 고고고"),"Park","조깅");
         List<Comment> expected = Arrays.asList(a,b,c);
 
         // 4. 비교
