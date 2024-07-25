@@ -24,7 +24,8 @@
                         수정
                     </button>
                     <!-- article 삭제 버튼 -->
-                    <button type="button" class="btn btn-sm btn-outline-danger comment-delete-btn" data-article-id="{{id}}">삭제</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger article-delete-btn"
+                            data-article-id="{{id}}" data-member-id="{{memberId}}">삭제</button>
                 </div>
                 <div class="card-body">
                     {{content}}
@@ -65,7 +66,7 @@
             </div>
         </div>
     </div>
-
+    <!-- 수정 이벤트 처리 -->
     <script>
         {
             // 모달 요소 선택
@@ -120,6 +121,46 @@
 
                     // 페이지 새로 고침
                     window.location.reload();
+                });
+            });
+        }
+    </script>
+
+    <!-- 삭제 이벤트 처리 -->
+    <script>
+        {
+            // 모달 이벤트 선택
+            const articleBtns = document.querySelectorAll(".article-delete-btn")
+
+            articleBtns.forEach(btn =>{
+                btn.addEventListener("click" , (event)=>{
+                    // 이벤트 발생 요소 선택 ( 삭제 버튼 변수화 )
+                    const articleDeleteBtn = event.target;
+
+                    // 삭제 댓글 id 가져오기
+                    const articleId = articleDeleteBtn.getAttribute("data-article-id");
+                    const memberId = articleDeleteBtn.getAttribute("data-member-id");
+                    console.log('삭제 버튼 클릭:${articleId}번 게시글');
+
+                    // 삭제 REST API 호출
+                    const url = `/api/member/${memberId}/articles/${articleId}`;
+                    fetch(url , {
+                        method : "delete"
+                    }).then(response => {
+                        // 삭제 실패
+                        if (!response){
+                            alert("게시글 삭제 실패..!");
+                            return;
+                        }
+                        // 삭제 성공
+                        const target = document.querySelector(`#articles-${articleId}`);
+                        target.remove();
+
+                        const msg = `${articleId}번 게시글을 삭제했습니다.`;
+                        alert(msg);
+
+                        window.location.reload();
+                    });
                 });
             });
         }
