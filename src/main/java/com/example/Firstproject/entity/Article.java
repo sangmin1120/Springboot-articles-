@@ -29,11 +29,11 @@ public class Article {
 
     public static Article toEntity(ArticleForm form, Member member){
         // 예외 발생
-        if (form.getId() != null){
-            throw new IllegalArgumentException("게시글 생성 실패! 댓글의 id가 없어야 합니다. ");
-        }
+//        if (form.getId() != null){
+//            throw new IllegalArgumentException("게시글 생성 실패! 게시글의 id가 없어야 합니다. ");
+//        }
         if (form.getMemberId() != member.getId()){
-            throw new IllegalArgumentException("게시글 생성 실패! 게시글의 id가 잘못됐습니다.");
+            throw new IllegalArgumentException("게시글 생성 실패! 게시글 또는 멤버 id가 잘못됐습니다.");
         }
         return new Article(form.getId(),
                 member,
