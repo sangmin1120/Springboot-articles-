@@ -33,11 +33,15 @@ public class ArticleService {
         return articleList;
     }
 
-    public Article show(Long id) {
-        return articleRepository.findById(id).orElse(null);
+    public Article show(Long memberId , Long id) {
+        Article target = articleRepository.findById(id).orElse(null);
+        if (target.getMember().getId() == memberId){
+            return target;
+        }
+        return null;
     }
 
-    // REST의 POST
+    // REST의 POST : articleId만 null값으로 줘야 됨.
     public Article create(Long memberId , ArticleForm dto) {
         Member member = memberRepository.findById(memberId).orElse(null);
 
@@ -81,7 +85,7 @@ public class ArticleService {
         Article target = articleRepository.findById(id).orElse(null);
 
         // target 조회
-        if (target == null){
+        if (target == null || target.getMember().getId() != memberId){
             return null;
         }
         // 성공적으로 삭제
