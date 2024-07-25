@@ -2,8 +2,8 @@ insert into member(email,password) values('111@111','{bcrypt}$2a$10$FRUHyArxnxuT
 insert into member(email,password) values('222@222','qwer');
 insert into member(email,password) values('333@333','asdf');
 insert into article(member_id,title,content) values(1,'가가가가','1111');
-insert into article(title,content) values('나나나나','2222');
-insert into article(title,content) values('다다다다','3333');
+insert into article(member_id,title,content) values(1,'나나나나','2222');
+insert into article(member_id,title,content) values(1,'다다다다','3333');
 
 insert into coffee(name,price) values('아메리카노','4500');
 insert into coffee(name,price) values('라떼','5000');
