@@ -137,7 +137,7 @@ public class MemberController {
     public String check_id(MemberForm dto , Model model , RedirectAttributes rttr){
         // 1. form을 받아와 엔티티로 변경 후
         Member entity = dto.toEntity();
-        log.info(entity.toString());
+//        log.info(entity.toString());
 
         // log.info(entity.toString());
 
@@ -162,8 +162,7 @@ public class MemberController {
             return "redirect:/login";
         }
 
-        List<Article> articleList = articleService.articles(target.getId())
-                .stream().map(article -> Article.toEntity(article,target)).collect(Collectors.toList());
+        List<ArticleForm> articleList = articleService.articles(target.getId());
         // log.info(target.toString());
         model.addAttribute("member",target);
         model.addAttribute("articleList",articleList);
