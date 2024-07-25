@@ -8,13 +8,119 @@
         </tr>
         </thead>
         <tbody>
+        <button>
+            생성
+        </button>
         {{#articleList}}
-            <tr>
-                <th>{{id}}</th>
-                <td><a href="/articles/{{id}}">{{title}}</a></td>
-                <td>{{content}}</td>
-            </tr>
+            <div class="card m-2" id="articles-{{id}}">
+                <div class="card-header">
+                    {{title}}
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#article-edit-modal"
+                            data-bs-id="{{id}}"
+                            data-bs-title="{{title}}"
+                            data-bs-content="{{content}}"
+                            data-bs-member-id="{{memberId}}">
+                        수정
+                    </button>
+                    <!-- article 삭제 버튼 -->
+                    <button type="button" class="btn btn-sm btn-outline-danger comment-delete-btn" data-article-id="{{id}}">삭제</button>
+                </div>
+                <div class="card-body">
+                    {{content}}
+                </div>
+            </div>
         {{/articleList}}
         </tbody>
     </table>
     <a href="/articles/new">New Article</a>
+    <!-- Modal -->
+    <div class="modal fade" id="article-edit-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">게시글 수정</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- 작성 폼-->
+                    <form>
+                        <!-- 제목 입력 폼-->
+                        <div class="mb-3">
+                            <label class="form-label">제목</label>
+                            <input type="text" class="form-control" id="edit-article-title">
+                        </div>
+                        <!--본문 입력 폼-->
+                        <div class="mb-3">
+                            <label class="form-label">내용</label>
+                            <textarea type="text" class="form-control" rows="3" id="edit-article-content"></textarea>
+                        </div>
+                        <!-- 히든 인풋 폼-->
+                        <input type="hidden" id="edit-article-id">
+                        <input type="hidden" id="edit-article-member-id">
+                        <!-- 전송 버튼 -->
+                        <button type="button" class="btn btn-primary" id="article-update-btn">수정 완료</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        {
+            // 모달 요소 선택
+            const articleEditModal = document.querySelector("#article-edit-modal");
+
+            // 모달 이벤트 감지
+            articleEditModal.addEventListener("show.bs.modal", function(event){
+                // 1. 트리거 버튼 선택
+                const triggerBtn = event.relatedTarget;
+
+                // 2. 데이터 가져오기
+                const id = triggerBtn.getAttribute("data-bs-id");
+                const title = triggerBtn.getAttribute("data-bs-title");
+                const content = triggerBtn.getAttribute("data-bs-content");
+                const memberId = triggerBtn.getAttribute("data-bs-member-id");
+                console.log(id, title, content, memberId);
+
+                // 3. 수정 폼에 데이터 반영
+                document.querySelector("#edit-article-id").value = id;
+                document.querySelector("#edit-article-title").value = title;
+                document.querySelector("#edit-article-content").value = content;
+                document.querySelector("#edit-article-member-id").value = memberId;
+            });
+        }
+        // REST API 호출
+        {
+            // 버튼 불러오기
+            const articleUpdateBtn = document.querySelector("#article-update-btn")
+
+            articleUpdateBtn.addEventListener("click",function(){
+                // 수정된 폼 생성
+                const article = {
+                  id : document.querySelector("#edit-article-id").value,
+                  memberId : document.querySelector("#edit-article-member-id").value,
+                  title : document.querySelector("#edit-article-title").value,
+                  content : document.querySelector("#edit-article-content").value
+                };
+                console.log(article);
+
+                // 수정 REST API 호출
+                const url = "/api/member/"+article.memberId+"/articles/"+article.id;
+                fetch(url , {
+                method : "PATCH",
+                headers :{ // 전송 데이터 타입
+                    "Content-Type" : "application/json"
+                },
+                body : JSON.stringify(article)
+                }).then(response => {
+                    // HTTP 응답 코드에 따른 메시지 출력
+                    const msg = (response.ok) ? "댓글이 수정됐습니다." : "댓글 수정 실패..!";
+                    alert(msg);
+
+                    // 페이지 새로 고침
+                    window.location.reload();
+                });
+            });
+        }
+    </script>
