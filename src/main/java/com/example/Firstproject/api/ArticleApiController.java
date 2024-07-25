@@ -25,9 +25,9 @@ public class ArticleApiController {
     public List<Article> index(@PathVariable Long memberId){
         return (List<Article>)articleService.index(memberId);
     }
-    @GetMapping("/api/articles/{id}")
-    public Article show(@PathVariable Long id){
-        return articleService.show(id);
+    @GetMapping("/api/member/{memberId}/articles/{id}")
+    public Article show(@PathVariable Long memberId , @PathVariable Long id){
+        return articleService.show(memberId,id);
     }
 
     // POST
