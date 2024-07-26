@@ -8,7 +8,8 @@
         </tr>
         </thead>
         <tbody>
-        <button>
+        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#article-new-modal"
+                data-bs-member-id="{{member.id}}">
             생성
         </button>
         {{#articleList}}
@@ -35,7 +36,38 @@
         </tbody>
     </table>
     <a href="/articles/new">New Article</a>
-    <!-- Modal -->
+
+    <!-- new Modal -->
+    <div class="modal fade" id="article-new-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">article 생성하기</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <!-- body -->
+                <div class="modal-body">
+                    <!-- 제목 입력 폼-->
+                    <div class="mb-3">
+                        <label class="form-label">제목</label>
+                        <input type="text" class="form-control" id="new-article-title">
+                    </div>
+                    <!--본문 입력 폼-->
+                    <div class="mb-3">
+                        <label class="form-label">내용</label>
+                        <textarea type="text" class="form-control" rows="3" id="new-article-content"></textarea>
+                    </div>
+                    <input type="hidden" id="new-article-memberId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="article-new-btn">create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- edit Modal -->
     <div class="modal fade" id="article-edit-modal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -66,6 +98,53 @@
             </div>
         </div>
     </div>
+    <!-- 생성 이벤트 처리 -->
+    <script>
+        {
+            // 모달 요소 선택
+            const articleNewModal = document.querySelector("#article-new-modal");
+
+            // 모달 이벤트 감지
+            articleNewModal.addEventListener("show.bs.modal",function(event){
+                // 1. 트리거 버튼 선택
+                const triggerBtn = event.relatedTarget;
+
+                // 2. memberId 히든값 입력하기
+                document.querySelector("#new-article-memberId").value = triggerBtn.getAttribute("data-bs-member-id");
+
+            });
+        }
+        {
+            // REST API 처리
+            const articleNewBtn = document.querySelector("#article-new-btn");
+
+            articleNewBtn.addEventListener("click",function(){
+                // 객체 생성
+                const article ={
+                    memberId : document.querySelector("#new-article-memberId").value,
+                    title : document.querySelector("#new-article-title").value,
+                    content : document.querySelector("#new-article-content").value
+                };
+                console.log(article);
+
+                const url = `/api/member/${article.memberId}/articles`;
+                fetch(url , {
+                method : "POST",
+                headers :{ // 전송 데이터 타입
+                    "Content-Type" : "application/json"
+                },
+                body : JSON.stringify(article)
+                }).then(response => {
+                    // HTTP 응답 코드에 따른 메시지 출력
+                    const msg = (response.ok) ? "게시글이 생성됐습니다." : "게시글 생성 실패..!";
+                    alert(msg);
+
+                    // 페이지 새로 고침
+                    window.location.reload();
+                });
+            });
+        }
+    </script>
     <!-- 수정 이벤트 처리 -->
     <script>
         {
@@ -116,7 +195,7 @@
                 body : JSON.stringify(article)
                 }).then(response => {
                     // HTTP 응답 코드에 따른 메시지 출력
-                    const msg = (response.ok) ? "댓글이 수정됐습니다." : "댓글 수정 실패..!";
+                    const msg = (response.ok) ? "게시글이 수정됐습니다." : "게시글 수정 실패..!";
                     alert(msg);
 
                     // 페이지 새로 고침
