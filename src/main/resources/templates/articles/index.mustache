@@ -10,12 +10,12 @@
         <tbody>
         <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#article-new-modal"
                 data-bs-member-id="{{member.id}}">
-            생성
+            게시글 생성
         </button>
         {{#articleList}}
             <div class="card m-2" id="articles-{{id}}">
-                <div class="card-header">
-                    {{title}}
+                <div class="card-header"><a href="/articles/{{id}}">
+                    {{title}}</a>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#article-edit-modal"
                             data-bs-id="{{id}}"
