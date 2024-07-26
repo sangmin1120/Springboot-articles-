@@ -142,29 +142,29 @@ public class MemberController {
         // log.info(entity.toString());
 
         // 2. DB에서 아이디 값을 찾아
-        Member target = memberRepository.findByEamil(entity.getEmail());
+        Member member = memberRepository.findByEamil(entity.getEmail());
         // log.info(target.toString());
 
         // 3. 비교
-        if (target == null){
+        if (member == null){
             // 실패 모달 띄우고 리다이렉트
             rttr.addFlashAttribute("msg","target 찾기 실패..!");
             return "redirect:/login";
         }
-        if (entity.getEmail() == target.getEmail()){
+        if (entity.getEmail() == member.getEmail()){
             // 실패 화면 띄우고 리다이렉트
             rttr.addFlashAttribute("msg","아이디 불일치..!");
             return "redirect:/login";
         }
-        if (!passwordEncoder.matches(entity.getPassword(), target.getPassword())){
+        if (!passwordEncoder.matches(entity.getPassword(), member.getPassword())){
             // 실패 화면 띄우고 리다이렉트
             rttr.addFlashAttribute("msg","비밀번호 불일치..!");
             return "redirect:/login";
         }
 
-        List<ArticleForm> articleList = articleService.articles(target.getId());
+        List<ArticleForm> articleList = articleService.articles(member.getId());
         // log.info(target.toString());
-        model.addAttribute("member",target);
+        model.addAttribute("member",member);
         model.addAttribute("articleList",articleList);
 
         // 4. 로그인 성공하면 "redirect:/members";
