@@ -21,37 +21,37 @@ public class ArticleApiController {
 //    private ArticleRepository articleRepository;
 //
     // GET
-    @GetMapping("/api/articles")
-    public List<Article> index(){
-        return (List<Article>)articleService.index();
+    @GetMapping("/api/member/{memberId}/articles")
+    public List<Article> index(@PathVariable Long memberId){
+        return (List<Article>)articleService.index(memberId);
     }
-    @GetMapping("/api/articles/{id}")
-    public Article show(@PathVariable Long id){
-        return articleService.show(id);
+    @GetMapping("/api/member/{memberId}/articles/{id}")
+    public Article show(@PathVariable Long memberId , @PathVariable Long id){
+        return articleService.show(memberId,id);
     }
 
     // POST
-    @PostMapping("/api/articles")
-    public ResponseEntity<Article> create(@RequestBody ArticleForm dto){
-        Article created = articleService.create(dto);
+    @PostMapping("/api/member/{memberId}/articles")
+    public ResponseEntity<Article> create(@PathVariable Long memberId,@RequestBody ArticleForm dto){
+        Article created = articleService.create(memberId,dto);
         return (created != null)?
                 ResponseEntity.status(HttpStatus.OK).body(created):
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     // PATCH
-    @PatchMapping("/api/articles/{id}")
-    public ResponseEntity<Article> update(@PathVariable Long id , @RequestBody ArticleForm dto){
-        Article updated = articleService.updated(id,dto);
+    @PatchMapping("/api/member/{memberId}/articles/{id}")
+    public ResponseEntity<Article> update(@PathVariable Long memberId,@PathVariable Long id , @RequestBody ArticleForm dto){
+        Article updated = articleService.updated(memberId,id,dto);
         return (updated != null)?
                 ResponseEntity.status(HttpStatus.OK).body(updated):
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     // DELETE
-    @DeleteMapping("/api/articles/{id}")
-    public ResponseEntity<Article> delete(@PathVariable Long id){
-        Article deleted = articleService.delete(id);
+    @DeleteMapping("/api/member/{memberId}/articles/{id}")
+    public ResponseEntity<Article> delete(@PathVariable Long memberId , @PathVariable Long id){
+        Article deleted = articleService.delete(memberId , id);
         return (deleted != null)?
                 ResponseEntity.status(HttpStatus.OK).build():
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

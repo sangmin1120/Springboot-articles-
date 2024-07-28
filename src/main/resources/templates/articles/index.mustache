@@ -1,4 +1,3 @@
-{{>layouts/header}}
     <!-- content -->
     <table class="table">
         <thead>
@@ -9,14 +8,239 @@
         </tr>
         </thead>
         <tbody>
+        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#article-new-modal"
+                data-bs-member-id="{{member.id}}">
+            게시글 생성
+        </button>
         {{#articleList}}
-            <tr>
-                <th>{{id}}</th>
-                <td><a href="/articles/{{id}}">{{title}}</a></td>
-                <td>{{content}}</td>
-            </tr>
+            <div class="card m-2" id="articles-{{id}}">
+                <div class="card-header"><a href="/articles/{{id}}">
+                    {{title}}</a>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#article-edit-modal"
+                            data-bs-id="{{id}}"
+                            data-bs-title="{{title}}"
+                            data-bs-content="{{content}}"
+                            data-bs-member-id="{{memberId}}">
+                        수정
+                    </button>
+                    <!-- article 삭제 버튼 -->
+                    <button type="button" class="btn btn-sm btn-outline-danger article-delete-btn"
+                            data-article-id="{{id}}" data-member-id="{{memberId}}">삭제</button>
+                </div>
+                <div class="card-body">
+                    {{content}}
+                </div>
+            </div>
         {{/articleList}}
         </tbody>
     </table>
     <a href="/articles/new">New Article</a>
-{{>layouts/footer}}
+
+    <!-- new Modal -->
+    <div class="modal fade" id="article-new-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">article 생성하기</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <!-- body -->
+                <div class="modal-body">
+                    <!-- 제목 입력 폼-->
+                    <div class="mb-3">
+                        <label class="form-label">제목</label>
+                        <input type="text" class="form-control" id="new-article-title">
+                    </div>
+                    <!--본문 입력 폼-->
+                    <div class="mb-3">
+                        <label class="form-label">내용</label>
+                        <textarea type="text" class="form-control" rows="3" id="new-article-content"></textarea>
+                    </div>
+                    <input type="hidden" id="new-article-memberId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="article-new-btn">create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- edit Modal -->
+    <div class="modal fade" id="article-edit-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">게시글 수정</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- 작성 폼-->
+                    <form>
+                        <!-- 제목 입력 폼-->
+                        <div class="mb-3">
+                            <label class="form-label">제목</label>
+                            <input type="text" class="form-control" id="edit-article-title">
+                        </div>
+                        <!--본문 입력 폼-->
+                        <div class="mb-3">
+                            <label class="form-label">내용</label>
+                            <textarea type="text" class="form-control" rows="3" id="edit-article-content"></textarea>
+                        </div>
+                        <!-- 히든 인풋 폼-->
+                        <input type="hidden" id="edit-article-id">
+                        <input type="hidden" id="edit-article-member-id">
+                        <!-- 전송 버튼 -->
+                        <button type="button" class="btn btn-primary" id="article-update-btn">수정 완료</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 생성 이벤트 처리 -->
+    <script>
+        {
+            // 모달 요소 선택
+            const articleNewModal = document.querySelector("#article-new-modal");
+
+            // 모달 이벤트 감지
+            articleNewModal.addEventListener("show.bs.modal",function(event){
+                // 1. 트리거 버튼 선택
+                const triggerBtn = event.relatedTarget;
+
+                // 2. memberId 히든값 입력하기
+                document.querySelector("#new-article-memberId").value = triggerBtn.getAttribute("data-bs-member-id");
+
+            });
+        }
+        {
+            // REST API 처리
+            const articleNewBtn = document.querySelector("#article-new-btn");
+
+            articleNewBtn.addEventListener("click",function(){
+                // 객체 생성
+                const article ={
+                    memberId : document.querySelector("#new-article-memberId").value,
+                    title : document.querySelector("#new-article-title").value,
+                    content : document.querySelector("#new-article-content").value
+                };
+                console.log(article);
+
+                const url = `/api/member/${article.memberId}/articles`;
+                fetch(url , {
+                method : "POST",
+                headers :{ // 전송 데이터 타입
+                    "Content-Type" : "application/json"
+                },
+                body : JSON.stringify(article)
+                }).then(response => {
+                    // HTTP 응답 코드에 따른 메시지 출력
+                    const msg = (response.ok) ? "게시글이 생성됐습니다." : "게시글 생성 실패..!";
+                    alert(msg);
+
+                    // 페이지 새로 고침
+                    window.location.reload();
+                });
+            });
+        }
+    </script>
+    <!-- 수정 이벤트 처리 -->
+    <script>
+        {
+            // 모달 요소 선택
+            const articleEditModal = document.querySelector("#article-edit-modal");
+
+            // 모달 이벤트 감지
+            articleEditModal.addEventListener("show.bs.modal", function(event){
+                // 1. 트리거 버튼 선택
+                const triggerBtn = event.relatedTarget;
+
+                // 2. 데이터 가져오기
+                const id = triggerBtn.getAttribute("data-bs-id");
+                const title = triggerBtn.getAttribute("data-bs-title");
+                const content = triggerBtn.getAttribute("data-bs-content");
+                const memberId = triggerBtn.getAttribute("data-bs-member-id");
+                console.log(id, title, content, memberId);
+
+                // 3. 수정 폼에 데이터 반영
+                document.querySelector("#edit-article-id").value = id;
+                document.querySelector("#edit-article-title").value = title;
+                document.querySelector("#edit-article-content").value = content;
+                document.querySelector("#edit-article-member-id").value = memberId;
+            });
+        }
+        // REST API 호출
+        {
+            // 버튼 불러오기
+            const articleUpdateBtn = document.querySelector("#article-update-btn")
+
+            articleUpdateBtn.addEventListener("click",function(){
+                // 수정된 폼 생성
+                const article = {
+                  id : document.querySelector("#edit-article-id").value,
+                  memberId : document.querySelector("#edit-article-member-id").value,
+                  title : document.querySelector("#edit-article-title").value,
+                  content : document.querySelector("#edit-article-content").value
+                };
+                console.log(article);
+
+                // 수정 REST API 호출
+                const url = "/api/member/"+article.memberId+"/articles/"+article.id;
+                fetch(url , {
+                method : "PATCH",
+                headers :{ // 전송 데이터 타입
+                    "Content-Type" : "application/json"
+                },
+                body : JSON.stringify(article)
+                }).then(response => {
+                    // HTTP 응답 코드에 따른 메시지 출력
+                    const msg = (response.ok) ? "게시글이 수정됐습니다." : "게시글 수정 실패..!";
+                    alert(msg);
+
+                    // 페이지 새로 고침
+                    window.location.reload();
+                });
+            });
+        }
+    </script>
+
+    <!-- 삭제 이벤트 처리 -->
+    <script>
+        {
+            // 모달 이벤트 선택
+            const articleBtns = document.querySelectorAll(".article-delete-btn")
+
+            articleBtns.forEach(btn =>{
+                btn.addEventListener("click" , (event)=>{
+                    // 이벤트 발생 요소 선택 ( 삭제 버튼 변수화 )
+                    const articleDeleteBtn = event.target;
+
+                    // 삭제 댓글 id 가져오기
+                    const articleId = articleDeleteBtn.getAttribute("data-article-id");
+                    const memberId = articleDeleteBtn.getAttribute("data-member-id");
+                    console.log('삭제 버튼 클릭:${articleId}번 게시글');
+
+                    // 삭제 REST API 호출
+                    const url = `/api/member/${memberId}/articles/${articleId}`;
+                    fetch(url , {
+                        method : "delete"
+                    }).then(response => {
+                        // 삭제 실패
+                        if (!response){
+                            alert("게시글 삭제 실패..!");
+                            return;
+                        }
+                        // 삭제 성공
+                        const target = document.querySelector(`#articles-${articleId}`);
+                        target.remove();
+
+                        const msg = `${articleId}번 게시글을 삭제했습니다.`;
+                        alert(msg);
+
+                        window.location.reload();
+                    });
+                });
+            });
+        }
+    </script>

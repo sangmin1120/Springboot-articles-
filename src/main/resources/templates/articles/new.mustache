@@ -12,4 +12,8 @@
         <button type="submit" class="btn btn-primary">Submit</button>
         <a href="/articles">Back</a>
     </form>
+    <!-- 히든 인풋 폼-->
+    {{#member}}
+        <input type="hidden" id="new-article-member-id" value="{{id}}">
+    {{/member}}
 {{>layouts/footer}}

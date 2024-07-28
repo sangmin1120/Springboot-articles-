@@ -1,6 +1,7 @@
 package com.example.Firstproject.service;
 
 import com.example.Firstproject.DTO.ArticleForm;
+import com.example.Firstproject.DTO.CommentDto;
 import com.example.Firstproject.entity.Article;
 import com.example.Firstproject.entity.Member;
 import com.example.Firstproject.repository.ArticleRepository;
@@ -25,18 +26,26 @@ public class ArticleService {
     @Autowired
     private MemberRepository memberRepository;
 
+
     // REST의 GET
-    public List<Article> index(){
-        return (List<Article>)articleRepository.findAll();
+    public List<Article> index(Long memberId){
+        List<Article> articleList = (List<Article>)articleRepository.findByMemberId(memberId);
+        return articleList;
     }
 
-    public Article show(Long id) {
-        return articleRepository.findById(id).orElse(null);
+    public Article show(Long memberId , Long id) {
+        Article target = articleRepository.findById(id).orElse(null);
+        if (target.getMember().getId() == memberId){
+            return target;
+        }
+        return null;
     }
 
-    // REST의 PATCH
-    public Article create(ArticleForm dto) {
-        Article article = dto.toEntity();
+    // REST의 POST : articleId만 null값으로 줘야 됨.
+    public Article create(Long memberId , ArticleForm dto) {
+        Member member = memberRepository.findById(memberId).orElse(null);
+
+        Article article = Article.toEntity(dto,member);
         log.info(article.toString());
         if (article.getId() != null){
             return null;
@@ -45,9 +54,14 @@ public class ArticleService {
     }
 
     // REST의 PATCH
-    public Article updated(Long id, ArticleForm dto) {
+    public Article updated(Long memberId , Long id, ArticleForm dto) {
+        // patch : 아이디를 찾지 못해서 실패..!
+        Member member = memberRepository.findById(memberId).orElse(null);
+        if (member==null){
+            return null;
+        }
         // DTO -> 엔티티
-        Article article = dto.toEntity();
+        Article article = Article.toEntity(dto,member);
         log.info("id: {} , article: {}",id,article.toString());
 
         // id로 타깃 조회
@@ -66,12 +80,12 @@ public class ArticleService {
     }
 
     // REST의 DELETE
-    public Article delete(Long id) {
+    public Article delete(Long memberId , Long id) {
         // id 찾기
         Article target = articleRepository.findById(id).orElse(null);
 
         // target 조회
-        if (target == null){
+        if (target == null || target.getMember().getId() != memberId){
             return null;
         }
         // 성공적으로 삭제
@@ -79,7 +93,10 @@ public class ArticleService {
         return target;
     }
 
-
+    public List<ArticleForm> articles(Long memberId){
+        return articleRepository.findByMemberId(memberId)
+                .stream().map(article -> ArticleForm.createArticleForm(article)).collect(Collectors.toList());
+    }
     // transaction -test
 //    @Transactional
 //    public List<Article> createdList(List<ArticleForm> dtos) {

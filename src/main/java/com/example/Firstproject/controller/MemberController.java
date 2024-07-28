@@ -1,9 +1,15 @@
 package com.example.Firstproject.controller;
 
+import com.example.Firstproject.DTO.ArticleForm;
+import com.example.Firstproject.DTO.CommentDto;
+import com.example.Firstproject.entity.Article;
 import com.example.Firstproject.entity.Member;
+import com.example.Firstproject.repository.ArticleRepository;
 import com.example.Firstproject.repository.MemberRepository;
+import com.example.Firstproject.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,12 +19,19 @@ import com.example.Firstproject.DTO.MemberForm;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
 public class MemberController {
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder; // DI
+    @Autowired
+    private ArticleRepository articleRepository;
+    @Autowired
+    private ArticleService articleService;
 
     @GetMapping("/members/new")
     public String newMemberForm(){
@@ -27,10 +40,17 @@ public class MemberController {
     }
 
     @PostMapping("/members/create")
-    public String createMember(MemberForm form){
+    public String createMember(MemberForm form,RedirectAttributes rttr){
+        String email = form.getEmail();
+        if (memberRepository.findByEamil(email) != null){
+            rttr.addFlashAttribute("msg","아이디 중복..!");
+            return "redirect:/members/new";
+        }
         // System.out.println(form.toString());
+        /* 비빌번호 인코딩 */
+        String encodedPwd = passwordEncoder.encode(form.getPassword());
         // 1. DTO->엔티티로 변환
-        Member member = form.toEntity();
+        Member member = new Member(null,form.getEmail(),encodedPwd);
         // System.out.println(member.toString());
 
         // 2. repository에 저장
@@ -104,5 +124,50 @@ public class MemberController {
 
         // 3. 뷰 템플릿 반환
         return "redirect:/members";
+    }
+
+    // init 화면에서 로그인 encoding된 로그인
+    @GetMapping("/login")
+    public String show_login(){
+        return "members/init";
+    }
+
+    // 로그인 확인하고 mypage를 반환
+    @GetMapping("/members/check")
+    public String check_id(MemberForm dto , Model model , RedirectAttributes rttr){
+        // 1. form을 받아와 엔티티로 변경 후
+        Member entity = dto.toEntity();
+//        log.info(entity.toString());
+
+        // log.info(entity.toString());
+
+        // 2. DB에서 아이디 값을 찾아
+        Member member = memberRepository.findByEamil(entity.getEmail());
+        // log.info(target.toString());
+
+        // 3. 비교
+        if (member == null){
+            // 실패 모달 띄우고 리다이렉트
+            rttr.addFlashAttribute("msg","target 찾기 실패..!");
+            return "redirect:/login";
+        }
+        if (entity.getEmail() == member.getEmail()){
+            // 실패 화면 띄우고 리다이렉트
+            rttr.addFlashAttribute("msg","아이디 불일치..!");
+            return "redirect:/login";
+        }
+        if (!passwordEncoder.matches(entity.getPassword(), member.getPassword())){
+            // 실패 화면 띄우고 리다이렉트
+            rttr.addFlashAttribute("msg","비밀번호 불일치..!");
+            return "redirect:/login";
+        }
+
+        List<ArticleForm> articleList = articleService.articles(member.getId());
+        // log.info(target.toString());
+        model.addAttribute("member",member);
+        model.addAttribute("articleList",articleList);
+
+        // 4. 로그인 성공하면 "redirect:/members";
+        return "members/mypage";
     }
 }
