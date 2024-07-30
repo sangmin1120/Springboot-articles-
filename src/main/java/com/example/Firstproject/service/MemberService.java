@@ -5,6 +5,7 @@ import com.example.Firstproject.entity.Member;
 import com.example.Firstproject.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,8 @@ import java.util.List;
 public class MemberService {
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     public List<Member> index() {
@@ -25,9 +28,18 @@ public class MemberService {
     }
 
     public Member create(MemberForm dto) {
-           Member member = dto.toEntity();
-           Member created = memberRepository.save(member);
-           return created;
+        // 1. 중복 아이디 검색 , 오류 제외
+        Member duplicated = memberRepository.findByEamil(dto.getEmail());
+        if (duplicated != null){
+            log.info(duplicated.getEmail() + " ID가 존재합니다...!");
+            return null;
+        }
+        // 2. 비밀번호 암호화
+        String encodedPwd = passwordEncoder.encode(dto.getPassword());
+        // 3. 저장 / 반환
+        Member member = new Member(null,dto.getEmail(),encodedPwd);
+        Member created = memberRepository.save(member);
+        return created;
     }
 
     public Member update(Long id, MemberForm dto) {
