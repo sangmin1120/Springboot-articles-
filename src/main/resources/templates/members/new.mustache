@@ -1,6 +1,6 @@
 {{>layouts/header}}
 <!-- content -->
-<form class="form container" action="/members/create" method="post">
+<form class="form container">
     <div class="mb-3">
         <label class="form-label">이메일</label>
         <input type="text" class="form-control" id="new-member-email" name="email">
@@ -12,33 +12,40 @@
     <button type="submit" class="btn btn-primary" id="new-member-btn">Submit</button>
 </form>
 {{>layouts/footer}}
-<!--<script>-->
-<!--    {-->
-<!--        // 버튼-->
-<!--        createBtn = document.querySelector("#new-member-btn");-->
+<script>
+    {
+        // 버튼
+        createBtn = document.querySelector("#new-member-btn");
 
-<!--        // 이벤트-->
-<!--        createBtn.addEventListener("click",function() =>{-->
-<!--            const member = {-->
-<!--                email : document.querySelector("#new-member-email"),-->
-<!--                password : document.querySelector("#new-member-password");-->
-<!--        });-->
-<!--        -->
-<!--        // REST API-->
-<!--        const url = "/api/members";-->
-<!--        fetch(url,{-->
-<!--            method : "POST",-->
-<!--            headers : {          // 전송 본문의 데이터 타입(JSON) 정보-->
-<!--                "Content-Type":"application/json"-->
-<!--                },-->
-<!--            body : JSON.stringify(member) // comment 객체를 JSON 문자열로 변환해 전송-->
-<!--        }).then(response => {-->
-<!--            // HTTP 응답 코드에 따른 메시지 출력-->
-<!--            const msg = (response.ok) ? "댓글이 등록됐습니다" : "댓글 등록 실패..!";-->
-<!--            alert(msg);-->
-<!--            // 현재 페이지 새로 고침-->
-<!--            window.location.reload();-->
-<!--            -->
-<!--        });-->
-<!--    }-->
-<!--</script>-->
+        // 이벤트
+        createBtn.addEventListener("click",function(event){
+             // 폼 제출 기본 동작 막기
+            event.preventDefault();
+
+            const member = {
+                email : document.querySelector("#new-member-email").value,
+                password : document.querySelector("#new-member-password").value
+        };
+        console.log(JSON.stringify(member));
+
+        // REST API
+        const url = "/api/members";
+        fetch(url,{
+            method : "POST",
+            headers : {          // 전송 본문의 데이터 타입(JSON) 정보
+                "Content-Type":"application/json"
+                },
+            body : JSON.stringify(member) // comment 객체를 JSON 문자열로 변환해 전송
+        }).then(response => {
+            // HTTP 응답 코드에 따른 메시지 출력
+            const msg = (response.ok) ? "멤버 등록됐습니다" : "멤버 등록 실패..!";
+            alert(msg);
+            // 현재 페이지 새로 고침
+            if (response.ok)
+                window.location.href = "/login";
+            else
+                window.location.reload();
+            });
+        });
+    }
+</script>
