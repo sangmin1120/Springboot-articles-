@@ -13,8 +13,12 @@ import java.util.List;
 @Service
 @Slf4j
 public class MemberService {
-    @Autowired
     private MemberRepository memberRepository;
+
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 

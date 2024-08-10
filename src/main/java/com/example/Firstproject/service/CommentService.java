@@ -16,10 +16,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
-    @Autowired
     private CommentRepository commentRepository;
-    @Autowired
     private ArticleRepository articleRepository;
+
+    public CommentService(CommentRepository commentRepository, ArticleRepository articleRepository) {
+        this.commentRepository = commentRepository;
+        this.articleRepository = articleRepository;
+    }
 
     public List<CommentDto> comments(Long articleId){
 //        List<Comment> comments = commentRepository.findByArticleId(articleId);

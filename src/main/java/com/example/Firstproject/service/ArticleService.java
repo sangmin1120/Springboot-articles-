@@ -21,11 +21,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class ArticleService {
-    @Autowired
     private ArticleRepository articleRepository; // 게시글 리파지터리 객체 주입
-    @Autowired
     private MemberRepository memberRepository;
 
+    public ArticleService(ArticleRepository articleRepository, MemberRepository memberRepository) {
+        this.articleRepository = articleRepository;
+        this.memberRepository = memberRepository;
+    }
 
     // REST의 GET
     public List<Article> index(Long memberId){
