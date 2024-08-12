@@ -3,15 +3,13 @@ package com.example.Firstproject.entity;
 import com.example.Firstproject.DTO.ArticleForm;
 import com.example.Firstproject.DTO.MemberForm;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor // 기본 생성자 추가 어노테이션
 @ToString
 @Getter
+@Setter
 @Entity
 public class Article {
     // 원래는 data.sql에서 id 값을 입력해 주었는데 새로운 article을 생성하면 기본키 error
